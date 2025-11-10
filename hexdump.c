@@ -40,13 +40,18 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Couldn't open the file: %s\n", strerror(errno));
         return 1;
     }
-    int buff;
-    while ((bytes_read = read(fd, &buff, sizeof(char))) > 0) {
-        if (buff == '\n') {
-            printf("\n");
-            continue;
+    char *buff = malloc(sizeof(char) * 64);
+    int offset;
+    while ((bytes_read = read(fd, buff, sizeof(buff))) > 0) {
+        for (int i = 0; i < bytes_read; i++) {
+            if ( i % 16 == 0) {
+                printf("%x: ", buff[i]);
+                continue;
+            } 
+            printf("%x", buff[i]);
+            if (i % 2 == 0)
+                putchar(' ');
         }
-        printf("%x ", buff);
     }
 }
  
