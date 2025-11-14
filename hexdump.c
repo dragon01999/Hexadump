@@ -7,6 +7,25 @@
 
 #define MIN_ARGS 2
 #define MAX_ARGS 3
+void print_hex(char *buff, int byte_count, int *offset)
+{
+    int k = 0;
+    char text[17];    
+    for (int i = 0; i < byte_count; i++) {
+        if (*offset % 16 == 0) {
+            if (i > 0)
+            printf("%s", buff);
+            printf("\n%x:", *offset);
+        }
+        if (i % 2 == 0)
+            putchar(' ');
+        printf("%x",buff[i]);
+        k = i % 16;
+        text[i] = buff[i];
+        *offset += 0x1;
+    }
+    return;
+}
 
 int main(int argc, char **argv) {
     int fd, opt, total_bytes, print_mode;
@@ -41,9 +60,10 @@ int main(int argc, char **argv) {
         return 1;
     }
     char *buff = malloc(sizeof(char) * 64);
-    int offset;
+    int offset = 0x0;
     while ((bytes_read = read(fd, buff, sizeof(buff))) > 0) {
-        for (int i = 0; i < bytes_read; i++) {
+        print_hex(buff, bytes_read, &offset);
+/*        for (int i = 0; i < bytes_read; i++) {
             if ( i % 16 == 0) {
                 printf("%x: ", buff[i]);
                 continue;
@@ -51,7 +71,7 @@ int main(int argc, char **argv) {
             printf("%x", buff[i]);
             if (i % 2 == 0)
                 putchar(' ');
-        }
+        } */
     }
 }
  
