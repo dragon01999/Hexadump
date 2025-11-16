@@ -18,7 +18,7 @@ void print_dump(unsigned char *buff, int bytes_read, int *offset, int opt)
     for (int i = 0; i < bytes_read; i++) {
         if (*offset % 16 == 0) {
             if (i > 0) /* dont print before printing values */
-                printf(" %s%s%s", CYAN, text, OFF);
+                printf("  %s%s%s", CYAN, text, OFF);
             memset(text, 0, sizeof(text)); /* set string buff to 0 to clear it */ 
             if (opt == 'o')
                 printf("\n%08o:", *offset);
@@ -38,12 +38,16 @@ void print_dump(unsigned char *buff, int bytes_read, int *offset, int opt)
             text[(i % 16)] = '.';
         *offset += 0x1;
     }
-    /* print the final line since loop would have exited */
-    printf(" %s%s%s\n", CYAN, text, OFF);
+    /* print the final line since loop would have exited. Instead of calculating all the padding just better to move and print where usually dump ends */
+    printf("\033[28C %s%s%s\n", CYAN, text, OFF);
     return;
 }
 
 int main(int argc, char **argv) {
+    if (!isatty(STDOUT_FILENO)) {
+        fprintf(stderr, "Stdout is not terminal\n");
+        return -1;
+    }
     int fd, opt, total_bytes;
     char *file;
     size_t bytes_read = 0;
