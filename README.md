@@ -1,2 +1,2 @@
-##Just a simple xxd like utility##
+## Just a simple xxd like utility
 

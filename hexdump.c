@@ -39,7 +39,7 @@ void print_dump(unsigned char *buff, int bytes_read, int *offset, int opt)
         *offset += 0x1;
     }
     /* print the final line since loop would have exited. Instead of calculating all the padding just better to move and print where usually dump ends */
-    printf("\033[28C %s%s%s\n", CYAN, text, OFF);
+    printf("\033[51G %s%s%s\n", CYAN, text, OFF);
     return;
 }
 
