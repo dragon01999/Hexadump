@@ -12,10 +12,10 @@
 #define MIN_ARGS 2
 #define MAX_ARGS 3
 
-void print_dump(unsigned char *buff, int byte_count, int *offset, int opt)
+void print_dump(unsigned char *buff, int bytes_read, int *offset, int opt)
 {
     unsigned char text[16];
-    for (int i = 0; i < byte_count; i++) {
+    for (int i = 0; i < bytes_read; i++) {
         if (*offset % 16 == 0) {
             if (i > 0) /* dont print before printing values */
                 printf(" %s%s%s", CYAN, text, OFF);
@@ -39,7 +39,7 @@ void print_dump(unsigned char *buff, int byte_count, int *offset, int opt)
         *offset += 0x1;
     }
     /* print the final line since loop would have exited */
-    printf(" %s%s%s", CYAN, text, OFF);
+    printf(" %s%s%s\n", CYAN, text, OFF);
     return;
 }
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
                 break;
             case '?':
                 fprintf(stderr, "Unkown option. Use -b for binary dump for hex dump default\n");
-                return 1;
+                return -1;
             default:
                 break;
         }
@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
     fd = open(file, O_RDONLY);
     if (fd == -1) {
         fprintf(stderr, "Couldn't open the file: %s\n", strerror(errno));
-        return 1;
+        return -1;
     }
     unsigned char buff[1024];
     int offset = 0x0;
@@ -77,5 +77,14 @@ int main(int argc, char **argv) {
         print_dump(buff, bytes_read, &offset, opt);
     }
     if (bytes_read == -1) {
-        fprintf(stderr, "Error while reading:%s", strerror(errno));
+        fprintf(stderr, "Error while reading:%s\n", strerror(errno));
+        goto clean_up;
+    }
+    clean_up:
+        if (close(fd) == -1) {
+            fprintf(stderr, "Close failed:%s\n", strerror(errno));
+        return -1;
+        }
+    return 0;
+
 }
